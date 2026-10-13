@@ -86,7 +86,11 @@ GENIEACS_DEBUG_FILE=/var/log/genieacs/genieacs-debug.yaml
 NODE_OPTIONS=--enable-source-maps
 GENIEACS_EXT_DIR=/opt/genieacs/ext
 GENIEACS_UI_JWT_SECRET=${JWT_SECRET}
+GENIEACS_CWMP_IP=0.0.0.0
 GENIEACS_NBI_IP=0.0.0.0
+GENIEACS_FS_IP=0.0.0.0
+GENIEACS_UI_IP=0.0.0.0
+GENIEACS_UI_PORT=3000
 EOF
     chown genieacs:genieacs /opt/genieacs/genieacs.env
     chmod 600 /opt/genieacs/genieacs.env
