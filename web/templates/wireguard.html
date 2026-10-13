@@ -1,0 +1,52 @@
+{{ define "content" }}
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px;">
+  <!-- Status & Info Card -->
+  <div class="glass-card">
+    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Koneksi WireGuard Tunnel</h3>
+    <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 24px;">
+      Jalur tunnel privat berkecepatan tinggi antara VPS dan router MikroTik untuk komunikasi API & TR-069.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">Status Tunnel</span>
+        <span class="status-pill online">Active (Interface wg0)</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">IP VPS (Local Gateway)</span>
+        <span class="mono-text" style="color: var(--primary);">{{ .ServerIP }}/24</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">IP MikroTik (Remote Peer)</span>
+        <span class="mono-text" style="color: var(--success);">{{ .MikroTikIP }}/24</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">Port UDP WireGuard</span>
+        <span class="mono-text">51820 / UDP</span>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary btn-sm" onclick="testMikroTikConnection()">Uji Ping & API MikroTik</button>
+  </div>
+
+  <!-- RouterOS Configuration Snippet -->
+  <div class="glass-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="font-size: 1.15rem; font-weight: 700;">Konfigurasi RouterOS v7</h3>
+      <span class="badge-tag">MikroTik Script</span>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+      Tempelkan perintah ini di Terminal Winbox MikroTik Anda:
+    </p>
+
+    <div style="background: rgba(0, 0, 0, 0.5); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--panel-border); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #38bdf8; overflow-x: auto; line-height: 1.6;">
+/interface wireguard add name=wg-vps listen-port=51820<br>
+/ip address add address=10.10.10.2/24 interface=wg-vps<br>
+/interface wireguard peers add interface=wg-vps endpoint-port=51820 allowed-address=10.10.10.1/32 persistent-keepalive=25s<br>
+/ip service enable api<br>
+/ip service set api port=8728
+    </div>
+  </div>
+</div>
+{{ end }}
+{{ template "base.html" . }}

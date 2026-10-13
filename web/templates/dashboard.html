@@ -1,0 +1,114 @@
+{{ define "content" }}
+<!-- Stats Metric Cards -->
+<div class="stats-grid">
+  <div class="glass-card stat-card">
+    <div class="stat-icon cyan">📶</div>
+    <div class="stat-info">
+      <h4>Total CPE / ONT</h4>
+      <div class="stat-value" id="stat-total-devices">{{ .Summary.TotalDevices }}</div>
+    </div>
+  </div>
+
+  <div class="glass-card stat-card">
+    <div class="stat-icon green">🟢</div>
+    <div class="stat-info">
+      <h4>ONT Online</h4>
+      <div class="stat-value" id="stat-online-devices">{{ .Summary.OnlineDevices }}</div>
+    </div>
+  </div>
+
+  <div class="glass-card stat-card">
+    <div class="stat-icon red">🔴</div>
+    <div class="stat-info">
+      <h4>ONT Offline</h4>
+      <div class="stat-value" id="stat-offline-devices">{{ .Summary.OfflineDevices }}</div>
+    </div>
+  </div>
+
+  <div class="glass-card stat-card">
+    <div class="stat-icon purple">🛡️</div>
+    <div class="stat-info">
+      <h4>WireGuard Tunnel</h4>
+      <div class="stat-value" style="font-size: 1.2rem; font-weight: 700; color: #34d399;">{{ .RouterStatus.WireGuardState }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Router Resource & Quick Monitoring -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+  <!-- MikroTik RouterOS Card -->
+  <div class="glass-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+        <span>🌐</span> MikroTik RouterOS Status
+      </h3>
+      <span class="status-pill {{ if .RouterStatus.Connected }}online{{ else }}offline{{ end }}">
+        {{ if .RouterStatus.Connected }}Connected (ROS7){{ else }}Unreachable{{ end }}
+      </span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">Router Identity</span>
+        <span style="font-weight: 600;">{{ .RouterStatus.Identity }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">Model & Arsitektur</span>
+        <span style="font-weight: 600;">{{ .RouterStatus.Model }} (ARM/MIPS)</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">RouterOS Version</span>
+        <span class="mono-text" style="color: var(--primary);">{{ .RouterStatus.Version }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">CPU Load</span>
+        <span style="font-weight: 600; color: var(--success);">{{ .RouterStatus.CPU }}%</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">Uptime</span>
+        <span class="mono-text">{{ .RouterStatus.Uptime }}</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px; display: flex; gap: 10px;">
+      <button class="btn btn-secondary btn-sm" onclick="testMikroTikConnection()">Uji Koneksi API</button>
+      <a href="/wireguard" class="btn btn-primary btn-sm">Kelola WireGuard</a>
+    </div>
+  </div>
+
+  <!-- GenieACS Engine Card -->
+  <div class="glass-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+        <span>⚡</span> GenieACS NBI Engine
+      </h3>
+      <span class="status-pill online">Active (Port 7557)</span>
+    </div>
+
+    <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+      GenieACS berjalan terintegrasi di port internal <strong>7557</strong>. Telemetri CPE (Optical Rx Power, WiFi SSID, IP WAN, Uptime) diperbarui secara real-time via TR-069 CWMP.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">CWMP Port (TR-069 ONT)</span>
+        <span class="mono-text">7547 / TCP</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">NBI API Port</span>
+        <span class="mono-text">7557 / TCP</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span style="color: var(--text-muted);">Database Backend</span>
+        <span class="mono-text">MongoDB 4.4</span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <button class="btn btn-secondary btn-sm" onclick="testACSConnection()">Uji NBI API</button>
+      <a href="/devices" class="btn btn-primary btn-sm">Buka Daftar ONT</a>
+    </div>
+  </div>
+</div>
+{{ end }}
+{{ template "base.html" . }}

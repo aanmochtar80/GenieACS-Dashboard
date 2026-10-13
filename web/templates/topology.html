@@ -1,0 +1,29 @@
+{{ define "content" }}
+<div class="glass-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+    <div>
+      <h3 style="font-size: 1.25rem; font-weight: 700;">Topologi Jaringan Visual</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Peta interaktif konektivitas MikroTik, OLT, Splitter ODP, dan ONT Pelanggan</p>
+    </div>
+
+    <!-- Legend -->
+    <div style="display: flex; gap: 16px; font-size: 0.82rem; align-items: center;">
+      <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 50%; background: #6366f1; display: inline-block;"></span> MikroTik</span>
+      <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 50%; background: #06b6d4; display: inline-block;"></span> OLT</span>
+      <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 50%; background: #10b981; display: inline-block;"></span> ODP Splitter</span>
+      <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 50%; background: #34d399; display: inline-block;"></span> ONT Online</span>
+      <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444; display: inline-block;"></span> ONT Offline / LOS</span>
+    </div>
+  </div>
+
+  <div style="width: 100%; border: 1px solid var(--panel-border); border-radius: var(--radius-md); overflow: hidden; background: rgba(8, 12, 20, 0.8); position: relative;">
+    <canvas id="topology-canvas" style="display: block; width: 100%; height: 480px;"></canvas>
+  </div>
+
+  <div style="margin-top: 16px; display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);">
+    <span>💡 Tip: Topologi membaca telemetri redaman optik secara real-time langsung dari TR-069 Virtual Parameters.</span>
+    <span class="mono-text">Rendered with HTML5 Canvas</span>
+  </div>
+</div>
+{{ end }}
+{{ template "base.html" . }}

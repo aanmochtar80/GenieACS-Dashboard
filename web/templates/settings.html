@@ -1,0 +1,97 @@
+{{ define "content" }}
+<div style="max-width: 800px;">
+  <div class="glass-card">
+    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Pengaturan Koneksi Sistem</h3>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 28px;">
+      Atur parameter koneksi internal ke GenieACS NBI dan router MikroTik.
+    </p>
+
+    <form id="settings-form" onsubmit="saveSettings(event)">
+      <!-- GenieACS Section -->
+      <div style="border-bottom: 1px solid var(--panel-border); padding-bottom: 24px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h4 style="font-size: 1rem; font-weight: 600; color: var(--primary);">⚡ GenieACS NBI REST API</h4>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="testACSConnection()">Test Koneksi ACS</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>Host / IP GenieACS</label>
+            <input type="text" id="acs_host" class="form-input" value="{{ index .Settings "acs_host" }}" required>
+          </div>
+          <div class="form-group">
+            <label>Port NBI</label>
+            <input type="text" id="acs_port" class="form-input" value="{{ index .Settings "acs_port" }}" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- MikroTik Section -->
+      <div style="border-bottom: 1px solid var(--panel-border); padding-bottom: 24px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h4 style="font-size: 1rem; font-weight: 600; color: var(--indigo);">🌐 MikroTik RouterOS API</h4>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="testMikroTikConnection()">Test Koneksi MikroTik</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>IP MikroTik (WireGuard Tunnel)</label>
+            <input type="text" id="mikrotik_host" class="form-input" value="{{ index .Settings "mikrotik_host" }}" placeholder="10.10.10.2">
+          </div>
+          <div class="form-group">
+            <label>Port API</label>
+            <input type="text" id="mikrotik_port" class="form-input" value="{{ index .Settings "mikrotik_port" }}" placeholder="8728">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>Username API</label>
+            <input type="text" id="mikrotik_user" class="form-input" value="{{ index .Settings "mikrotik_user" }}" placeholder="admin">
+          </div>
+          <div class="form-group">
+            <label>Password API</label>
+            <input type="password" id="mikrotik_pass" class="form-input" value="{{ index .Settings "mikrotik_pass" }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+async function saveSettings(e) {
+  e.preventDefault();
+  const payload = {
+    acs_host: document.getElementById('acs_host').value,
+    acs_port: document.getElementById('acs_port').value,
+    mikrotik_host: document.getElementById('mikrotik_host').value,
+    mikrotik_port: document.getElementById('mikrotik_port').value,
+    mikrotik_user: document.getElementById('mikrotik_user').value,
+    mikrotik_pass: document.getElementById('mikrotik_pass').value,
+  };
+
+  try {
+    const res = await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showToast(data.message || 'Pengaturan berhasil disimpan!', 'success');
+    } else {
+      showToast('Gagal menyimpan: ' + (data.error || 'Server error'), 'error');
+    }
+  } catch (err) {
+    showToast('Koneksi gagal: ' + err, 'error');
+  }
+}
+</script>
+{{ end }}
+{{ template "base.html" . }}

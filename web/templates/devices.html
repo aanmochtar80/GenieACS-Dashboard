@@ -1,0 +1,75 @@
+{{ define "content" }}
+<div class="glass-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h3 style="font-size: 1.25rem; font-weight: 700;">Manajemen Perangkat CPE / ONT</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Daftar modem/router pelanggan yang terhubung via TR-069 CWMP</p>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <input type="text" id="device-search" class="form-input" placeholder="Cari Serial, Model, SSID..." style="width: 260px; padding: 8px 14px; font-size: 0.88rem;">
+      <a href="/devices" class="btn btn-secondary btn-sm">Segarkan</a>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Serial Number</th>
+          <th>Model / Pabrikan</th>
+          <th>WiFi SSID</th>
+          <th>Redaman Optik (Rx)</th>
+          <th>Last Inform</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="devices-table-body">
+        {{ range .Devices }}
+        <tr>
+          <td>
+            <span class="status-pill {{ if eq .Status "online" }}online{{ else }}offline{{ end }}">
+              {{ .Status }}
+            </span>
+          </td>
+          <td class="mono-text" style="color: var(--primary); font-weight: 600;">
+            {{ .SerialNumber }}
+          </td>
+          <td>
+            <div style="font-weight: 600;">{{ .Model }}</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">{{ .Manufacturer }}</div>
+          </td>
+          <td>
+            {{ if .SSID }}
+              <span style="font-weight: 500;">📶 {{ .SSID }}</span>
+            {{ else }}
+              <span style="color: var(--text-muted);">-</span>
+            {{ end }}
+          </td>
+          <td>
+            <span class="mono-text" style="font-weight: 600; color: #34d399;">
+              {{ .RxPower }} dBm
+            </span>
+          </td>
+          <td style="font-size: 0.82rem; color: var(--text-muted);">
+            {{ .LastInform.Format "02 Jan 15:04" }}
+          </td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="rebootDevice('{{ .ID }}')">Reboot</button>
+          </td>
+        </tr>
+        {{ else }}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            Belum ada CPE/ONT yang mengirimkan inform ke GenieACS. Pastikan URL ACS di modem pelanggan diarahkan ke: <br>
+            <strong style="color: var(--primary);">http://IP_VPS:7547/</strong>
+          </td>
+        </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ end }}
+{{ template "base.html" . }}
