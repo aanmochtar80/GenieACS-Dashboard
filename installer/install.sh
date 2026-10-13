@@ -96,8 +96,33 @@ EOF
     chmod 600 /opt/genieacs/genieacs.env
 fi
 
-GENIEACS_BIN_DIR=$(dirname "$(command -v genieacs-cwmp || echo "/usr/bin/genieacs-cwmp")")
+# Deteksi dan buat symlink binary GenieACS ke /usr/bin
+NPM_BIN_DIR="$(npm prefix -g 2>/dev/null)/bin"
+for b in cwmp nbi fs ui; do
+    REAL_BIN=""
+    if [[ -x "/usr/local/bin/genieacs-$b" ]]; then
+        REAL_BIN="/usr/local/bin/genieacs-$b"
+    elif [[ -x "/usr/bin/genieacs-$b" ]]; then
+        REAL_BIN="/usr/bin/genieacs-$b"
+    elif [[ -x "${NPM_BIN_DIR}/genieacs-$b" ]]; then
+        REAL_BIN="${NPM_BIN_DIR}/genieacs-$b"
+    elif command -v "genieacs-$b" >/dev/null 2>&1; then
+        REAL_BIN="$(command -v "genieacs-$b")"
+    fi
+
+    if [[ -n "$REAL_BIN" && "$REAL_BIN" != "/usr/bin/genieacs-$b" ]]; then
+        ln -sf "$REAL_BIN" "/usr/bin/genieacs-$b"
+    fi
+done
+
+GENIEACS_BIN="/usr/bin"
 for service in cwmp nbi fs ui; do
+    # Fallback jika tidak di /usr/bin
+    EXEC_CMD="/usr/bin/genieacs-$service"
+    if [[ ! -x "$EXEC_CMD" && -x "/usr/local/bin/genieacs-$service" ]]; then
+        EXEC_CMD="/usr/local/bin/genieacs-$service"
+    fi
+
     cat << EOF > /etc/systemd/system/genieacs-$service.service
 [Unit]
 Description=GenieACS $service
@@ -106,7 +131,7 @@ After=network.target mongod.service
 [Service]
 User=genieacs
 EnvironmentFile=/opt/genieacs/genieacs.env
-ExecStart=${GENIEACS_BIN_DIR}/genieacs-$service
+ExecStart=${EXEC_CMD}
 Restart=always
 RestartSec=3
 
