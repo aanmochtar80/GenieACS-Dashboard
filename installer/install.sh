@@ -172,7 +172,7 @@ elif [[ -f "../genieacs-dashboard-linux-amd64" ]]; then
     cp ../genieacs-dashboard-linux-amd64 "${INSTALL_DIR}/genieacs-dashboard"
 else
     info "Mengunduh binary rilis GenieACS Dashboard terbaru..."
-    curl -sSL -o "${INSTALL_DIR}/genieacs-dashboard" https://raw.githubusercontent.com/aanmochtar80/Mikrotik-Script/main/GenieACS-Dashboard/genieacs-dashboard-linux-amd64
+    curl -sSL -o "${INSTALL_DIR}/genieacs-dashboard" https://raw.githubusercontent.com/aanmochtar80/GenieACS-Dashboard/main/genieacs-dashboard-linux-amd64
 fi
 
 chmod +x "${INSTALL_DIR}/genieacs-dashboard"

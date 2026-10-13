@@ -77,8 +77,8 @@ Jalankan perintah ini di VPS Anda untuk menginstal **GenieACS Server + MongoDB 4
 
 ```bash
 cd ~
-git clone https://github.com/aanmochtar80/Mikrotik-Script.git
-cd Mikrotik-Script/GenieACS-Dashboard
+git clone https://github.com/aanmochtar80/GenieACS-Dashboard.git
+cd GenieACS-Dashboard
 sudo chmod +x installer/install.sh
 sudo ./installer/install.sh
 ```
