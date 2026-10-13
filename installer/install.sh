@@ -62,12 +62,18 @@ success "MongoDB Server aktif."
 # 3. GENIEACS SERVER v1.2.13
 # ------------------------------------------------------------------------------
 title "3. Menginstal Node.js & GenieACS Server Engine"
-if ! command -v node >/dev/null 2>&1; then
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-    apt-get install -y nodejs
+if ! command -v npm >/dev/null 2>&1; then
+    info "Memasang Node.js & NPM..."
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - 2>/dev/null || true
+    apt-get update -y
+    apt-get install -y nodejs || true
+    if ! command -v npm >/dev/null 2>&1; then
+        apt-get install -y npm nodejs || true
+    fi
 fi
 
 if ! command -v genieacs-nbi >/dev/null 2>&1; then
+    info "Menginstal GenieACS v1.2.13 via NPM..."
     npm install -g genieacs@1.2.13
 fi
 
